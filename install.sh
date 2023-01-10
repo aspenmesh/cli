@@ -12,7 +12,7 @@ usage() {
   echo "
 usage: ${0} [flags] [-h|--help]
 Flags               Purpose
---apiKey            Required; The API key provided upon initial signup to Aspen Mesh
+--api-key           Required; The API key provided upon initial signup to Aspen Mesh
 " >&2
 
     exit 1
@@ -24,7 +24,7 @@ while [[ $# -gt 0 ]]
 do
   key="$1"
   case $key in
-    --apiKey)
+    --api-key)
     apiKey="$2"
     shift # past argument
     shift # past value
@@ -36,7 +36,7 @@ do
 done
 
 if [[ -z "${apiKey}" ]]; then
-  echo "missing <apiKey> argument" >&2
+  echo "missing <api-key> argument" >&2
   usage
 fi
 
