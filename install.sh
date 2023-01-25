@@ -41,8 +41,32 @@ if [[ -z "${apiKey}" ]]; then
 fi
 
 # Add the Aspen Mesh Helm Repository
-helm repo add aspenmesh https://aspenmesh.github.io/aspenmesh-charts/
-helm repo update
+aspenMeshHelmChartRepo="https://aspenmesh.github.io/aspenmesh-charts/"
+helmAddErr=$(helm repo add aspenmesh ${aspenMeshHelmChartRepo} 2>&1 >/dev/null || true)
+helmUpdateErr=$(helm repo update 2>&1 >/dev/null || true)
+if [[ -n "${helmAddErr}" || -n "${helmUpdateErr}" ]]; then
+  echo ""
+  echo "***Failed to add Aspen Mesh Chart helm repository ${aspenMeshHelmChartRepo}***"
+  echo "Please send the following error messages to hello@aspenmesh.io:"
+  echo "${helmAddErr}"
+  echo "${helmUpdateErr}"
+  echo ""
+  exit 1
+fi
 
-helm upgrade --install aspenmesh-collector aspenmesh/aspenmesh-collector -n aspenmesh --create-namespace --set apiKey=${apiKey} --set endpoint=${endpoint}
+helmInstallErr=$(helm upgrade --install aspenmesh-collector aspenmesh/aspenmesh-collector -n aspenmesh --create-namespace --set apiKey=${apiKey} --set endpoint=${endpoint} 2>&1 >/dev/null || true)
+
+if [[ -n "${helmInstallErr}" ]]; then
+  echo ""
+  echo "***Failed to install Aspen Mesh Collector by helm***"
+  echo "Please send the following error messages to hello@aspenmesh.io:"
+  echo "${helmInstallErr}"
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "***Aspen Mesh Collector has been installed successfully!***"
+echo "All the Aspen Mesh Collector pods can be found by command 'kubectl get pods -n aspenmesh'"
+echo ""
 
