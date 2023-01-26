@@ -44,5 +44,13 @@ fi
 helm repo add aspenmesh https://aspenmesh.github.io/aspenmesh-charts/
 helm repo update
 
-helm upgrade --install aspenmesh-collector aspenmesh/aspenmesh-collector -n aspenmesh --create-namespace --set apiKey=${apiKey} --set endpoint=${endpoint}
+isHelmInstallSuccessful="true"
+helm upgrade --install aspenmesh-collector aspenmesh/aspenmesh-collector -n aspenmesh --create-namespace --set apiKey=${apiKey} --set endpoint=${endpoint} || isHelmInstallSuccessful="false"
+
+if [[ "${isHelmInstallSuccessful}" == "false" ]]; then
+  echo "
+***Failed to install Aspen Mesh Helm Charts***
+If you're stuck, reach out to us at hello@aspenmesh.io and include the error message above.
+"
+fi
 
